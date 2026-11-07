@@ -7,6 +7,7 @@ app.use(express.static("public"));
 
 // AI “mock copilot engine”
 app.post("/analyze", (req, res) => {
+  if (typeof req.body?.input !== "string") return res.status(400).json({error: "input must be a string"});
   const input = req.body.input.toLowerCase();
 
   let result = {
@@ -38,7 +39,8 @@ app.post("/analyze", (req, res) => {
 });
 
 app.post("/generate", (req, res) => {
-  const name = req.body.name || "app";
+  const name = req.body?.name || "app";
+  if (typeof name !== "string" || !/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,62}$/.test(name)) return res.status(400).json({error: "name must contain only letters, numbers, underscores or hyphens"});
 
   res.json({
     server:
